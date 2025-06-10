@@ -1,0 +1,127 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% block title %}Product Detail{% endblock title %}
+{% block main-content %}
+<div class="container my-5">
+  <div class="row">
+    <div class="col-sm-6 text-center align-self-center">
+      <img src="{{ product.product_image.url }}" alt="{{ product.title }}" class="img-fluid img-thumbnail">
+    </div>
+    <div class="col-sm-5 offset-sm-1">
+      <h2>Product Title: {{ product.title }}</h2>
+      <hr>
+      <p>{{ product.description }}</p>
+      <h4>Rs. {{ product.discounted_price }} 
+      <small class="fw-light text-decoration-line-through">Rs. {{ product.selling_price }}</small>
+      </h4>
+      <br>
+      {% if product.category == 'M' or product.category == 'L' %}
+        <form action="{% url 'add-to-cart' %}" method="POST" class="d-inline">
+          {% csrf_token %}
+          <input type="hidden" name="prod_id" value="{{ product.id }}">
+          <div class="mb-3">
+            <label for="color" class="form-label">Color:</label>
+            <select name="color" id="color" class="form-select">
+              <option value="">All</option>
+              {% for color in colors %}
+                <option value="{{ color.id }}" {% if color == product.color %}selected{% endif %}>{{ color.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="ram_option" class="form-label">RAM:</label>
+            <select name="ram" id="ram" class="form-select">
+              <option value="">All</option>
+              {% for ram in rams %}
+                <option value="{{ ram.id }}" {% if ram == product.ram %}selected{% endif %}>{{ ram.size }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="quantity" class="form-label">Quantity</label>
+            <input type="number" class="form-control" id="quantity" name="quantity" min="1" value="1">
+          </div>
+          {% if item_already_in_cart %}
+            <a href="{% url 'showcart' %}" class="btn btn-warning shadow px-5 py-2 ms-4">Go to Cart</a>
+          {% else %}
+            {% if request.user.is_authenticated %}
+              <button type="submit" id="{{ product.id }}" class="btn btn-primary shadow px-5 py-2">Add to Cart</button>
+            {% else %}
+            {% if not request.user.is_authenticated %}
+            <a href="{% url 'Login' %}?next={% url 'add-to-cart' %}?prod_id={{ product.id }}&quantity=1"
+            class="btn btn-primary px-5 py-2">Add to Cart</a>
+            {% else %}
+            <form action="{% url 'add-to-cart' %}" method="POST" class="d-inline">
+              {% csrf_token %}
+              <input type="hidden" name="prod_id" value="{{ product.id }}">
+              <input type="hidden" name="quantity" value="1">
+              <button type="submit" class="btn btn-primary px-5 py-2">Add to Cart</button>
+            </form>
+            {% endif %}
+            {% endif %}
+          {% endif %}
+        </form>
+      {% elif product.category == 'TW' or product.category == 'BW' %}
+        <form action="{% url 'add-to-cart' %}" method="POST" class="d-inline">
+          {% csrf_token %}
+          <input type="hidden" name="prod_id" value="{{ product.id }}">
+          <div class="mb-3">
+            <label for="color" class="form-label">Color:</label>
+            <select name="color" id="color" class="form-select">
+              <option value="">All</option>
+              {% for color in colors %}
+                <option value="{{ color.id }}" {% if color == product.color %}selected{% endif %}>{{ color.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="size" class="form-label text-black">Size:</label>
+            <select name="size" id="size" class="form-select">
+              <option value="">All</option>
+              {% for size in sizes %}
+                <option value="{{ size.id }}" {% if size == product.size %}selected{% endif %}>{{ size.size }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="quantity" class="form-label">Quantity</label>
+            <input type="number" class="form-control" id="quantity" name="quantity" min="1" value="1">
+          </div>
+          {% if item_already_in_cart %}
+            <a href="{% url 'showcart' %}" class="btn btn-warning shadow px-5 py-2 ms-4">Go to Cart</a>
+          {% else %}
+            {% if request.user.is_authenticated %}
+              <button type="submit" id="pr{{ product.id }}" class="btn btn-primary shadow px-5 py-2">Add to Cart</button>
+            {% else %}
+            {% if not request.user.is_authenticated %}
+            <a href="{% url 'Login' %}?next={% url 'add-to-cart' %}?prod_id={{ product.id }}&quantity=1"
+            class="btn btn-primary px-5 py-2">Add to Cart</a>
+            {% else %}
+            <form action="{% url 'add-to-cart' %}" method="POST" class="d-inline">
+              {% csrf_token %}
+              <input type="hidden" name="prod_id" value="{{ product.id }}">
+              <input type="hidden" name="quantity" value="1">
+              <button type="submit" class="btn btn-primary px-5 py-2">Add to Cart</button>
+            </form>
+            {% endif %}
+            {% endif %}
+          {% endif %}  
+        </form>
+      {% endif %}
+      <form method="GET" action="{% url 'checkout' %}" class="d-inline">
+        <input type="hidden" name="product_id" value="{{ product.id }}">
+        <input type="hidden" name="quantity" value="1">
+        <button type="submit" class="btn btn-danger px-5 py-2">Buy Now</button>
+      </form>
+      <h5 class="mt-5">Available Offers</h5>
+      <ul>
+        <li>Bank Offer 5% Unlimited Cashback on Flipkart Axis Bank Credit</li>
+        <li>Special Price Get extra ₹3000 off (price inclusive of discount)</li>
+        <li>No cost EMI ₹1,667/month. Standard EMI also available</li>
+        <li>Partner Offer ₹2000 Flipkart Gift Card on Every 1000th Transaction with a new Visa Debit/Credit Card</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+{% endblock main-content %}

@@ -1,0 +1,42 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% block title %} Customer Support {% endblock title %}
+{% block main-content %}
+<div class="container my-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="card shadow-lg border-0">
+        <div class="card-body p-4">
+          <h3 class="card-title text-center mb-4 text-primary">Contact AShopping Admin</h3>
+          <form action="/contact/" method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label for="name" class="form-label fw-semibold">Name:</label>
+              <input type="text" class="form-control rounded-pill" id="name" name="name" aria-describedby="name" required>
+            </div>
+            <div class="mb-3">
+              <label for="email" class="form-label fw-semibold">Email address:</label>
+              <input type="email" class="form-control rounded-pill" id="email" aria-describedby="emailHelp" name="email" required>
+              <div id="emailHelp" class="form-text text-muted">We respect your privacy and your email address will never be shared with any third party.</div>
+            </div>
+            <div class="mb-3">
+              <label for="phone" class="form-label fw-semibold">Phone Number:</label>
+              <input type="tel" class="form-control rounded-pill" id="phone" name="phone">
+            </div>
+            <div class="mb-3">
+              <label for="content" class="form-label fw-semibold">Please Write your Issue:</label>
+              <textarea class="form-control rounded-4" name="content" id="content" cols="30" rows="5" required></textarea>
+            </div>
+            <div class="d-grid gap-2">
+              <button type="submit" class="btn btn-primary btn-lg rounded-pill">Submit</button>
+            </div>
+          </form>
+        </div>
+      </div>
+      <div class="text-center mt-3">
+        <small class="text-secondary">Need urgent help? <a href="mailto:support@ashopping.com" class="text-decoration-none">Email us directly</a></small>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock main-content %}

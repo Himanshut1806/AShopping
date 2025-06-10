@@ -1,0 +1,83 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% block title %} Top Wears {% endblock title %}
+{% block main-content %}
+    <div class="container my-5">
+    <div class="row">
+    <div class="col-sm-3">
+    <div class="card">
+      <div class="card-header fw-bold">
+      Filter
+      </div>
+      <div class="card-body">
+        <form method="get"> 
+        <div class="row-sm-3">
+        <div class="col">
+            <div class="mb-2">
+            <label for="brand" class="form-label">Brand</label>
+            <select class="form-select" id="brand" name="brand">
+              <option value="">All</option>
+              <option value="US Polo" {% if request.GET.brand == 'US Polo' %}selected{% endif %}>US Polo</option>
+              <option value="Roadster" {% if request.GET.brand == 'Roadster' %}selected{% endif %}>Roadster</option>
+              <option value="Both" {% if request.GET.brand == 'Both' %}selected{% endif %}>Both</option>
+            </select>
+          </div>
+          
+          <div class="mb-2">
+            <label for="color" class="form-label">Color</label>
+            <select class="form-select" id="color" name="color">
+              <option value="">All</option>
+              {% for c in colors %}
+                <option value="{{ c.id }}" {% if request.GET.color == c.id|stringformat:"s" %}selected{% endif %}>{{ c.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="mb-2">
+            <label for="size" class="form-label">Size</label>
+            <select class="form-select" id="size" name="size">
+              <option value="">All</option>
+              {% for s in sizes %}
+                <option value="{{ s.id }}" {% if request.GET.size == s.id|stringformat:"s" %}selected{% endif %}>{{ s.size }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="mb-2">
+            <label for="price" class="form-label">Price Range</label>
+            <select class="form-select" id="price" name="price">
+              <option value="">All</option>
+              <option value="below500" {% if request.GET.price == 'below500' %}selected{% endif %}>Below 500</option>
+              <option value="500to5000" {% if request.GET.price == '500to5000' %}selected{% endif %}>500 - 5000</option>
+              <option value="above1000" {% if request.GET.price == 'above1000' %}selected{% endif %}>Above 1000</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary w-100">Apply</button>
+        </form>
+      </div>
+    </div>
+    </div>
+    </div>
+  </div>
+
+  <div class="col-sm-8">
+    <div class="row">
+        {% for product in topwears %}
+        <div class="col-sm-4 text-center mb-4">
+            <a href="{% url 'product-detail' product.id %}" class="btn">
+              <div class="item">
+                <img src="{{product.product_image.url}}" alt="" height="300" class="">
+                <div class="fw-bold">{{product.title}}</div>
+                <div class="fw-bold">Rs. {{product.discounted_price}}
+                <small class="fw-light text-decoration-line-through">{{product.selling_price}}</small></div>    
+              </div>
+            </a>
+        </div>
+        {% empty %}
+        <div class="col-12">
+          <p class="text-center">No products found matching your filters.</p>
+        </div>
+        {% endfor %}
+    </div>
+  </div>
+ </div>
+</div>
+{% endblock main-content %}

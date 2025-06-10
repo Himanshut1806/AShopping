@@ -1,0 +1,89 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% block title %}Checkout{% endblock title %}
+{% block main-content %}
+<div class="container">
+  <div class="row mt-5">
+    <div class="col-sm-6">
+      <h4>Order Summary</h4>
+      <hr>
+      {% if is_buy_now %}
+        <div class="alert alert-dark">You are buying this item directly</div>
+      {% endif %}
+      {% for item in cart_items %}
+        <div class="card mb-2">
+          <div class="card-body">
+            <h5>Product: {{ item.product.title }}</h5>
+            <p>Quantity: {{ item.quantity }}</p>
+            <p class="fw-bold">Price: Rs. {{ item.total_cost }}</p>
+          </div>
+        </div>
+      {% endfor %}
+      <p class="fw-bold">Total Cost + Rs. 70 = Rs. {{ totalamount }}</p>
+    </div>
+
+    <div class="col-sm-4 offset-sm-1">
+      <h4>Select Shipping Address</h4>
+      <hr>
+      <form id="shipping-address-form">
+        {% csrf_token %}
+        {% for ad in add %}
+          <div class="card mb-2">
+            <div class="card-body">
+              <h5>{{ ad.name }}</h5>
+              <p>{{ ad.locality }}, {{ ad.city }}, {{ ad.state }} - {{ ad.zipcode }}</p>
+              <div class="form-check mt-2">
+                <input class="form-check-input" type="radio" name="custid"
+                       id="custadd{{ forloop.counter }}" value="{{ ad.id }}"
+                       {% if forloop.first %}checked{% endif %}>
+                <label class="form-check-label fw-bold" for="custadd{{ forloop.counter }}">
+                  Address: {{ forloop.counter }}
+                </label>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+        {% if is_buy_now %}
+          <input type="hidden" id="product_id" value="{{ product_id }}">
+          <input type="hidden" id="quantity" value="{{ quantity }}">
+        {% endif %}
+      </form>
+      <div class="text-end">
+        <button id="checkout-button" class="btn btn-primary">Make Payment</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://js.stripe.com/v3/"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+  $('#checkout-button').click(function(e) {
+    e.preventDefault();
+    const addressId = $('input[name="custid"]:checked').val();
+    let url = "{% url 'create-checkout-session' %}?address_id=" + encodeURIComponent(addressId);
+
+    {% if is_buy_now %}
+      const productId = $('#product_id').val();
+      const quantity = $('#quantity').val();
+      url += "&product_id=" + encodeURIComponent(productId) + "&quantity=" + encodeURIComponent(quantity);
+    {% endif %}
+
+    $.ajax({
+      url: url,
+      type: "GET",
+      dataType: 'json',
+      success: function(data) {
+        const stripe = Stripe('{{ STRIPE_PUBLISHABLE_KEY }}');
+        stripe.redirectToCheckout({ sessionId: data.sessionId });
+      },
+      error: function(xhr) {
+        const error = xhr.responseJSON?.error || 'Payment failed';
+        alert('Error: ' + error);
+      }
+    });
+  });
+});
+</script>
+{% endblock main-content %}

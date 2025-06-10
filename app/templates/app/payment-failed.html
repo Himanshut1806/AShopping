@@ -1,0 +1,16 @@
+{% extends 'app/base.html' %}
+{% load static %}
+{% block title %}Payment Failed{% endblock title %}
+{% block main-content %}
+<div class="container">
+    <h1>Payment failed for product: {{product.title}}</h1>
+    <div class="product-container">
+        <div class="products">
+            <img class="img" src="{{product.product_image.url}}" alt="{{product.name}}">
+            <p>{{product.name}}</p>
+            <p>Price: Rs. {{product.discounted_price}}</p>
+            <p>Description: {{product.description}}</p>
+        </div>  
+    </div>
+</div>
+{% endblock main-content %}
