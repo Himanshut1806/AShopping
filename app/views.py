@@ -125,7 +125,7 @@ def payment_successful(request):
 
         order = OrderPlaced.objects.create(user=user,customer=customer,product=product,quantity=quantity,status='Accepted',
         amount_total=amount_total,payment_status=payment_status,payment_id=payment_id)
-        orders.append(order)
+        orders.append(order)                  #Adds the newly created order to the orders list 
         request.session['buy_now'] = None
     else:
         cart_items = Cart.objects.filter(user=user)
@@ -227,7 +227,7 @@ class ProfileView(View):
     def get(self, request):
         profile = Customer.objects.filter(user=request.user).first()
         form = CustomerProfileForm(instance=profile)
-        return render(request, 'app/profile.html', {'form': form,'active': 'btn-primary'})
+        return render(request, 'app/profile.html', {'form': form, 'active': 'btn-primary'})
 
     def post(self, request):
         profile = Customer.objects.filter(user=request.user).first()
@@ -293,7 +293,7 @@ def show_cart(request):
             'amount': amount,
             'shipping_cost': shipping_amount
         })
-    return render(request, 'app/emptycart.html')  
+    return render(request, 'app/emptycart.html')       
 
 def plus_cart(request):
     if request.method == 'GET':
