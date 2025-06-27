@@ -293,7 +293,7 @@ def show_cart(request):
             'amount': amount,
             'shipping_cost': shipping_amount
         })
-    return render(request, 'app/emptycart.html')       
+    return render(request, 'app/emptycart.html') 
 
 def plus_cart(request):
     if request.method == 'GET':

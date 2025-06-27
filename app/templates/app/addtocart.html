@@ -69,4 +69,67 @@
     </div>
   </div>
 </div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$('.plus-cart').click(function(){
+    var id = $(this).attr("pid").toString();
+    var eml = this.parentNode.children[2]
+    $.ajax({
+        type:"GET",
+        url:"/pluscart",
+        data:{
+            prod_id:id 
+        },
+        success: function (data) {
+            eml.innerText = data.quantity
+            document.getElementById("amount").innerText = data.amount
+            document.getElementById("totalamount").innerText = data.totalamount
+
+        }
+    })
+})
+
+
+$('.minus-cart').click(function(){
+    var id = $(this).attr("pid").toString();
+    var eml = this.parentNode.children[2]
+    $.ajax({
+        type:"GET",
+        url:"/minuscart",
+        data:{
+            prod_id:id 
+        },
+        success: function (data) {
+            eml.innerText = data.quantity
+            document.getElementById("amount").innerText = data.amount
+            document.getElementById("totalamount").innerText = data.totalamount
+
+        }
+    })
+})
+
+$('.remove-cart').click(function(e){
+    e.preventDefault();
+    var id = $(this).attr("pid");
+    var $cartItem = $(this).closest('.cart-item');
+
+    $.ajax({
+        type: "GET",
+        url: "/removecart",
+        data: { prod_id: id },
+        success: function (data) {
+            if (data.error) {
+                alert(data.error);
+                return;
+            }
+            $("#amount").text(data.amount);
+            $("#totalamount").text(data.totalamount);
+            $cartItem.remove();
+                window.location.reload();
+        }
+    });
+});
+
+</script>
 {% endblock main-content %}
